@@ -19,42 +19,30 @@
             padding: 20px;
         }
         .loader {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #fe2c55;
             animation: spin 1s ease-in-out infinite;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        h2 { font-size: 18px; margin-bottom: 10px; font-weight: 600; }
-        p { color: #888; margin-bottom: 30px; font-size: 13px; max-width: 300px; line-height: 1.4; }
+        h2 { font-size: 20px; margin-bottom: 10px; font-weight: 600; }
+        p { color: #888; margin-bottom: 30px; font-size: 14px; max-width: 300px; line-height: 1.5; }
 
         .btn {
             background-color: #fe2c55;
             color: white;
-            padding: 16px 32px;
+            padding: 18px 40px;
             text-decoration: none;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 18px;
             display: inline-block;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.4);
             margin-bottom: 15px;
-            width: 80%;
-            max-width: 300px;
-        }
-        
-        .btn-secondary {
-            background-color: transparent;
-            border: 1px solid #555;
-            color: #ccc;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 14px;
-            display: inline-block;
             width: 80%;
             max-width: 300px;
         }
@@ -64,57 +52,57 @@
 
     <div class="loader"></div>
     <h2>Sedang membuka TikTok...</h2>
-    <p>Jika popup "Open in TikTok" keluar, tekan <b>Open</b>.</p>
+    <p>Sila tekan butang di bawah jika App tidak terbuka.</p>
     
-    <a id="appBtn" href="#" class="btn">BUKA DALAM APP</a>
-    
-    <a id="webBtn" href="#" class="btn-secondary">Buka Link Biasa (Backup)</a>
+    <a id="deepLinkBtn" href="#" class="btn">BUKA PRODUK</a>
 
     <script>
         // ==========================================
-        // LINK PRODUK
+        // LINK AFFILIATE (Paste link awak di sini)
         // ==========================================
         var productLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/";
         // ==========================================
 
-        var appBtn = document.getElementById('appBtn');
-        var webBtn = document.getElementById('webBtn');
-        
+        var btn = document.getElementById('deepLinkBtn');
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
         var isAndroid = /android/i.test(userAgent);
         var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        // 1. Setup Link Backup (Link biasa)
-        webBtn.href = productLink;
+        var finalLink = "#";
 
-        // 2. Setup Deep Link (Link App)
-        var deepLink = productLink;
-
-        if (isAndroid) {
-            // Android: Guna Intent untuk TikTok Asia (com.ss.android.ugc.trill)
-            var urlParts = productLink.replace(/^https?:\/\//, '');
-            deepLink = "intent://" + urlParts + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
+        if (isIOS) {
+            // FIX TERBARU UNTUK IOS:
+            // Jangan guna 'webview?url='.
+            // Kita tukar terus 'https' jadi 'tiktok'.
+            // App TikTok akan faham dia perlu resolve shortlink ni.
+            
+            // Buang 'https://' atau 'http://'
+            var cleanLink = productLink.replace(/^https?:\/\//, '');
+            
+            // Jadikan: tiktok://vt.tiktok.com/xxxx
+            finalLink = "tiktok://" + cleanLink;
         } 
-        else if (isIOS) {
-            // iOS FIX: Guna 'tiktok://' bukannya 'snssdk1128://'
-            // Kita encode URL untuk pass ke dalam browser TikTok
-            var encodedUrl = encodeURIComponent(productLink);
-            deepLink = "tiktok://webview?url=" + encodedUrl;
+        else if (isAndroid) {
+            // ANDROID (Kekal dengan Intent com.ss.android.ugc.trill)
+            var cleanLink = productLink.replace(/^https?:\/\//, '');
+            finalLink = "intent://" + cleanLink + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
+        }
+        else {
+            finalLink = productLink;
         }
 
-        // Set link pada butang utama
-        appBtn.href = deepLink;
+        // Set link butang
+        btn.href = finalLink;
 
-        // Auto-Click Simulation (Untuk paksa popup keluar)
+        // Auto Click
         window.onload = function() {
             setTimeout(function() {
-                // Cuba redirect
-                window.location.href = deepLink;
+                window.location.href = finalLink;
             }, 100);
-
+            
             setTimeout(function() {
-                // Cuba klik butang secara maya
-                appBtn.click();
+                btn.click();
             }, 500);
         };
     </script>
