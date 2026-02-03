@@ -1,17 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buka TikTok Shop</title>
-<style>
-  body { background: #000; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; text-align: center; }
-  .btn { background: #fe2c55; color: #fff; padding: 20px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 20px; margin-top: 20px; display: block; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membuka TikTok...</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .btn {
+            background-color: #fe2c55;
+            color: white;
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 25px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.5);
+        }
+        p { color: #aaa; font-size: 14px; margin-top: 15px; }
+    </style>
 </head>
 <body>
-  <p>Klik butang di bawah untuk lihat produk:</p>
-  
-  <a href="https://vt.tiktok.com/ZSH3vgQeSGqh1-U8PCD/" class="btn">BUKA DI TIKTOK</a>
 
+    <h3>Sila Tekan Butang Di Bawah</h3>
+    <p>Untuk masuk ke aplikasi TikTok</p>
+    
+    <a id="shopBtn" href="#" class="btn">BUKA PRODUK</a>
+
+    <script>
+        // LINK PENDEK AWAK
+        var shortLink = "https://vt.tiktok.com/ZSH3vgQeSGqh1-U8PCD/";
+
+        var btn = document.getElementById('shopBtn');
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        var isAndroid = /android/i.test(userAgent);
+        
+        // Buang 'https://' untuk kegunaan Android Intent
+        var cleanLink = shortLink.replace(/^https?:\/\//, '');
+
+        var finalLink = shortLink;
+
+        if (isAndroid) {
+            // ANDROID: Kita paksa App TikTok (com.ss.android.ugc.trill) untuk proses link https ini.
+            // Ini akan paksa phone buka App, bukan browser.
+            finalLink = "intent://" + cleanLink + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + shortLink + ";end";
+        } 
+        else {
+            // iOS & LAIN-LAIN: Guna link asal (https). 
+            // Jangan guna tiktok:// sebab akan lari ke FYP.
+            // Biarkan iPhone detect sendiri ini link TikTok.
+            finalLink = shortLink;
+        }
+
+        // Set link pada butang
+        btn.href = finalLink;
+
+        // Auto-Click selepas 0.5 saat
+        // (Kita perlu auto-click sebab user malas nak tekan)
+        window.onload = function() {
+            setTimeout(function() {
+                // Untuk iOS, window.location kadang-kadang lebih efektif trigger Universal Link
+                window.location.href = finalLink;
+            }, 500);
+        };
+    </script>
 </body>
 </html>
