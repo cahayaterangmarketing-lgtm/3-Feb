@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buka TikTok Shop...</title>
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+        }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fe2c55;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 25px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        h2 { font-size: 20px; margin-bottom: 10px; font-weight: 600; }
+        p { color: #888; margin-bottom: 30px; font-size: 14px; max-width: 300px; line-height: 1.5; }
+
+        .btn {
+            background-color: #fe2c55;
+            color: white;
+            padding: 18px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.4);
+            transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active { transform: scale(0.96); }
+    </style>
+</head>
+<body>
+
+    <div class="loader"></div>
+    <h2>Sedang membuka TikTok...</h2>
+    <p>Jika popup muncul, tekan <b>Open</b>. <br>Atau tekan butang di bawah:</p>
+    
+    <a id="deepLinkBtn" href="#" class="btn">BUKA TIKTOK APP</a>
+
+    <script>
+        // ==========================================
+        // 1. MASUKKAN LINK AFFILIATE AWAK DI SINI
+        // ==========================================
+        var productLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/";
+        // ==========================================
+
+        var btn = document.getElementById('deepLinkBtn');
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Kesan Android vs iOS
+        var isAndroid = /android/i.test(userAgent);
+        var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+        var deepLink = "#";
+
+        if (isAndroid) {
+            // ANDROID SPECIAL (MALAYSIA/ASIA VERSION)
+            // Kita guna package 'com.ss.android.ugc.trill' (TikTok Asia)
+            // Format Intent ini memaksa Android cari App TikTok sahaja.
+            var urlParts = productLink.replace(/^https?:\/\//, '');
+            
+            // Intent ini sangat spesifik: "Buka link ini HANYA guna app TikTok Asia"
+            // S.browser_fallback_url kita set kosong atau ke link asal supaya dia tak pening.
+            deepLink = "intent://" + urlParts + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
+        } 
+        else if (isIOS) {
+            // iOS SPECIAL
+            // Guna 'snssdk1128' (Scheme TikTok Global)
+            // Kita encode URL produk supaya webview dalam TikTok boleh bacanya.
+            var encodedUrl = encodeURIComponent(productLink);
+            deepLink = "snssdk1128://webview?url=" + encodedUrl;
+        } 
+        else {
+            // Desktop fallback
+            deepLink = productLink;
+        }
+
+        // Set link pada butang
+        btn.href = deepLink;
+
+        // AUTO REDIRECT (Cuba sekali sahaja)
+        // Kita guna setTimeout pendek. Browser Facebook mungkin block ini,
+        // TAPI popup "Open in TikTok" akan keluar jika browser tak block sepenuhnya.
+        setTimeout(function() {
+            window.location.href = deepLink;
+        }, 100);
+
+        // EXTRA: Simulasikan klik pada butang (Trick untuk bypass browser)
+        // Kadang-kadang browser ingat user yang klik kalau kita trigger dari event.
+        window.onload = function() {
+            setTimeout(function() {
+                btn.click();
+            }, 500);
+        };
+
+    </script>
+</body>
+</html>
