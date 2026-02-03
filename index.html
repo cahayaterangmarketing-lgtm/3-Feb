@@ -35,9 +35,9 @@
 <body>
 
     <h3>Sila Tekan Butang Di Bawah</h3>
-    <p>Jika popup tidak keluar...</p>
+    <p>Untuk masuk ke aplikasi TikTok</p>
     
-    <a id="shopBtn" href="#" class="btn">BUKA PRODUK</a>
+    <a id="shopBtn" href="#" class="btn" rel="noreferrer">BUKA PRODUK</a>
 
     <script>
         // LINK PENDEK AWAK
@@ -47,13 +47,11 @@
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
         var isAndroid = /android/i.test(userAgent);
         
-        // Buang 'https://' untuk kegunaan Android Intent
         var cleanLink = shortLink.replace(/^https?:\/\//, '');
-
         var finalLink = shortLink;
 
         if (isAndroid) {
-            // ANDROID: Kekal guna Intent (Supaya terus buka App)
+            // ANDROID: Kekal guna Intent (Teknik yang awak kata 'jadi' tadi)
             finalLink = "intent://" + cleanLink + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + shortLink + ";end";
         } 
         else {
@@ -64,9 +62,8 @@
         // Set link pada butang
         btn.href = finalLink;
 
-        // SAYA DAH BUANG BAHAGIAN 'window.onload' DI SINI.
-        // User wajib tekan butang manual.
-        // Ini satu-satunya cara untuk elak Verify Puzzle 100%.
+        // TIADA AUTO-REDIRECT. 
+        // User wajib tekan butang manual untuk elak Puzzle.
     </script>
 </body>
 </html>
