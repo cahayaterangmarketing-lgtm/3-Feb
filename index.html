@@ -64,12 +64,11 @@
         // Set link pada butang
         btn.href = finalLink;
 
-        // AUTO-CLICK LAJU (50ms)
-        // Ini akan trigger popup serta-merta bila page load
+        // AUTO-CLICK (Diubah dari 50 ke 1000 supaya tak keluar puzzle)
         window.onload = function() {
             setTimeout(function() {
                 window.location.href = finalLink;
-            }, 50); // <-- Dah ditukar jadi super laju
+            }, 1000); // <--- INI SAHAJA SAYA TUKAR (1 saat)
         };
     </script>
 </body>
