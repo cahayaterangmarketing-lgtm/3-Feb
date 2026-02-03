@@ -50,52 +50,48 @@
 <body>
 
     <div class="loader"></div>
-    <h2>Sedang membuka Produk...</h2>
-    <p>Jika tersangkut, tekan butang di bawah:</p>
+    <h2>Membuka Produk...</h2>
+    <p>Tunggu sebentar...</p>
     
     <a id="deepLinkBtn" href="#" class="btn">LIHAT PRODUK</a>
 
     <script>
         // ==========================================
-        // LINK AFFILIATE
+        // 1. WAJIB: MASUKKAN LINK PANJANG DI SINI
+        // Jangan guna vt.tiktok.com. Guna link yang dah expand.
         // ==========================================
-        var productLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/";
+        var longProductLink = "PASTE_LINK_PANJANG_DISINI"; 
+        // Contoh: https://shop.tiktok.com/view/product/17293...?enter_from=...
         // ==========================================
 
         var btn = document.getElementById('deepLinkBtn');
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        
         var isAndroid = /android/i.test(userAgent);
         var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        var finalLink = productLink;
-
-        // KITA ENCODE URL SUPAYA TIKTOK BOLEH BACA
-        var encodedUrl = encodeURIComponent(productLink);
+        // Encode Link Panjang tu supaya selamat lalu dalam URL
+        var encodedUrl = encodeURIComponent(longProductLink);
+        var finalLink = longProductLink;
 
         if (isIOS) {
-            // iOS STRATEGI: Guna 'tiktok://webview'
-            // Ini memaksa App buka browser dia sendiri, baru link vt.tiktok tu berjalan lancar
+            // iOS: Kita suruh TikTok buka browser dalaman dia dengan link panjang tu
             finalLink = "tiktok://webview?url=" + encodedUrl;
         } 
         else if (isAndroid) {
-            // ANDROID STRATEGI: Sama, kita try paksa webview dalam intent
-            // Kalau intent biasa gagal, ini backup yang power
-            var urlParts = productLink.replace(/^https?:\/\//, '');
-            finalLink = "intent://webview?url=" + encodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
+            // Android: Sama juga, kita guna method webview
+            // Kita buang https:// depan link untuk format Intent
+            var cleanUrl = longProductLink.replace(/^https?:\/\//, '');
+            finalLink = "intent://webview?url=" + encodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + longProductLink + ";end";
         }
 
-        // Set link butang
         btn.href = finalLink;
 
         // Auto Run
         window.onload = function() {
-            // Delay sikit bagi loading animation nampak
             setTimeout(function() {
                 window.location.href = finalLink;
             }, 200);
 
-            // Force click lepas 1 saat (Backup)
             setTimeout(function() {
                 btn.click();
             }, 1000);
