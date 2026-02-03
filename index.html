@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
     <title>Membuka TikTok...</title>
     <style>
         body {
@@ -51,19 +52,18 @@
         var finalLink = shortLink;
 
         if (isAndroid) {
-            // ANDROID: Kekal guna Intent (Teknik yang awak kata 'jadi' tadi)
+            // ANDROID: Kekal guna Intent
             finalLink = "intent://" + cleanLink + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + shortLink + ";end";
         } 
         else {
-            // iOS: Kekal guna Universal Link
+            // iOS: Link biasa tanpa target_blank supaya iPhone boleh detect App
             finalLink = shortLink;
         }
 
         // Set link pada butang
         btn.href = finalLink;
 
-        // TIADA AUTO-REDIRECT. 
-        // User wajib tekan butang manual untuk elak Puzzle.
+        // TIADA AUTO-REDIRECT
     </script>
 </body>
 </html>
