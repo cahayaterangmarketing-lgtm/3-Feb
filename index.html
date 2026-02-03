@@ -1,85 +1,17 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sedang Membuka...</title>
-    <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-        }
-        .btn {
-            background-color: #fe2c55;
-            color: white;
-            padding: 18px 30px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 18px;
-            margin-top: 20px;
-            display: inline-block;
-            width: 80%;
-            max-width: 300px;
-        }
-        p { color: #aaa; font-size: 14px; margin-top: 15px; padding: 0 20px; }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buka TikTok Shop</title>
+<style>
+  body { background: #000; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; text-align: center; }
+  .btn { background: #fe2c55; color: #fff; padding: 20px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 20px; margin-top: 20px; display: block; }
+</style>
 </head>
 <body>
+  <p>Klik butang di bawah untuk lihat produk:</p>
+  
+  <a href="https://vt.tiktok.com/ZSH3vgQeSGqh1-U8PCD/" class="btn">BUKA DI TIKTOK</a>
 
-    <h3>Membuka TikTok Shop...</h3>
-    <p>Tunggu sebentar...</p>
-
-    <a id="shopBtn" href="#" class="btn">BUKA PRODUK</a>
-    
-    <p style="font-size: 12px; color: #555; margin-top: 30px;">
-        Nota: Jika masuk ke FYP, sila ganti dengan Link Panjang.
-    </p>
-
-    <script>
-        // ============================================
-        // LINK PENDEK YANG KAU BAGI
-        // ============================================
-        var shortLink = "https://vt.tiktok.com/ZSH3vgQeSGqh1-U8PCD/";
-        // ============================================
-
-        var btn = document.getElementById('shopBtn');
-        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        var isAndroid = /android/i.test(userAgent);
-        var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-
-        // Kita encode URL supaya dia masuk elok dalam sistem App
-        var encodedUrl = encodeURIComponent(shortLink);
-        var finalLink = shortLink;
-
-        if (isIOS) {
-            // iOS: Paksa buka Browser Dalaman TikTok (Webview)
-            // Ini peluang terbaik untuk link pendek berfungsi
-            finalLink = "tiktok://webview?url=" + encodedUrl;
-        } 
-        else if (isAndroid) {
-            // Android: Paksa buka App TikTok Malaysia (Trill)
-            finalLink = "intent://webview?url=" + encodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + shortLink + ";end";
-        }
-
-        // Set link pada butang
-        btn.href = finalLink;
-
-        // Auto Jalan
-        window.onload = function() {
-            // Delay sikit (300ms)
-            setTimeout(function() { window.location.href = finalLink; }, 300);
-            // Tekan butang automatik lepas 1 saat (Backup)
-            setTimeout(function() { btn.click(); }, 1000);
-        };
-    </script>
 </body>
 </html>
