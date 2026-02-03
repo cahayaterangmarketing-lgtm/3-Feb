@@ -3,98 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sedang Membuka...</title>
+    <title>TikTok Shop...</title>
     <style>
-        body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-            padding: 20px;
-        }
-        .loader {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fe2c55;
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 25px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        h2 { font-size: 18px; margin-bottom: 10px; font-weight: 600; }
-        p { color: #888; margin-bottom: 30px; font-size: 13px; max-width: 300px; line-height: 1.4; }
-
-        .btn {
-            background-color: #fe2c55;
-            color: white;
-            padding: 16px 32px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 16px;
-            display: inline-block;
-            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.4);
-            width: 80%;
-            max-width: 300px;
-        }
+        body { background-color: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+        .loader { border: 4px solid #333; border-top: 4px solid #fe2c55; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn { background-color: #fe2c55; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; display: inline-block; font-size: 18px; width: 80%; max-width: 300px; }
+        p { color: #aaa; font-size: 13px; margin-top: 15px; padding: 0 20px; line-height: 1.4; }
     </style>
 </head>
 <body>
-
     <div class="loader"></div>
-    <h2>Membuka Produk...</h2>
-    <p>Tunggu sebentar...</p>
+    <h3>Membuka Produk...</h3>
+    <p>Jika tersangkut di FYP, sila kembali ke sini dan tekan butang merah.</p>
     
     <a id="deepLinkBtn" href="#" class="btn">LIHAT PRODUK</a>
 
     <script>
-        // ==========================================
-        // 1. WAJIB: MASUKKAN LINK PANJANG DI SINI
-        // Jangan guna vt.tiktok.com. Guna link yang dah expand.
-        // ==========================================
-        var longProductLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/"; 
-        // Contoh: https://shop.tiktok.com/view/product/17293...?enter_from=...
-        // ==========================================
+        // ========================================================
+        // LINK PENDEK KAU (Paste di sini)
+        // ========================================================
+        var shortLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/"; 
+        // ========================================================
 
         var btn = document.getElementById('deepLinkBtn');
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
         var isAndroid = /android/i.test(userAgent);
         var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        // Encode Link Panjang tu supaya selamat lalu dalam URL
-        var encodedUrl = encodeURIComponent(longProductLink);
-        var finalLink = longProductLink;
+        // 1. Buang slash belakang jika ada (kadang2 slash ni punca error)
+        var cleanLink = shortLink.replace(/\/$/, "");
+
+        // 2. TEKNIK DOUBLE ENCODING (Rahsia dia kat sini)
+        // Kita encode DUA KALI supaya app tak 'telan' link ni mentah-mentah.
+        var doubleEncodedUrl = encodeURIComponent(encodeURIComponent(cleanLink));
+
+        var finalLink = cleanLink;
 
         if (isIOS) {
-            // iOS: Kita suruh TikTok buka browser dalaman dia dengan link panjang tu
-            finalLink = "tiktok://webview?url=" + encodedUrl;
+            // iOS: Force Webview dengan Double Encode
+            // Bila App baca, dia akan decode sekali -> dapat link encoded -> pass kat browser -> browser decode lagi -> dapat link sebenar.
+            finalLink = "tiktok://webview?url=" + doubleEncodedUrl;
         } 
         else if (isAndroid) {
-            // Android: Sama juga, kita guna method webview
-            // Kita buang https:// depan link untuk format Intent
-            var cleanUrl = longProductLink.replace(/^https?:\/\//, '');
-            finalLink = "intent://webview?url=" + encodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + longProductLink + ";end";
+            // Android: Sama, kita guna double encode dalam Intent
+            // Guna package com.ss.android.ugc.trill (TikTok Asia/Malaysia)
+            finalLink = "intent://webview?url=" + doubleEncodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + cleanLink + ";end";
         }
 
         btn.href = finalLink;
 
-        // Auto Run
+        // Auto Execute
         window.onload = function() {
-            setTimeout(function() {
-                window.location.href = finalLink;
-            }, 200);
-
-            setTimeout(function() {
-                btn.click();
-            }, 1000);
+            setTimeout(function() { window.location.href = finalLink; }, 200);
+            setTimeout(function() { btn.click(); }, 1200);
         };
     </script>
 </body>
