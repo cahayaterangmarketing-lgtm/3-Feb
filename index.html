@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tuntut Baucar TikTok...</title>
+    <title>Sedang Membuka...</title>
     <style>
         body {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #000;
+            color: #fff;
             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
@@ -19,8 +19,8 @@
             padding: 20px;
         }
         .loader {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #fe2c55;
@@ -29,96 +29,73 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        h2 { font-size: 18px; margin-bottom: 5px; font-weight: 600; }
-        p { color: #888; margin-bottom: 30px; font-size: 13px; max-width: 300px; line-height: 1.4; }
-
         .btn {
             background-color: #fe2c55;
             color: white;
-            padding: 18px 20px;
+            padding: 18px 40px;
             text-decoration: none;
             border-radius: 8px;
-            font-weight: 700;
-            font-size: 16px;
+            font-weight: 800;
+            font-size: 18px;
             display: block;
             width: 100%;
             max-width: 320px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.3);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.4);
+            border: none;
+            cursor: pointer;
         }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid #333;
-            color: #ccc;
-            padding: 15px 20px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            display: block;
-            width: 100%;
-            max-width: 320px;
-        }
+        .btn:active { transform: scale(0.96); }
+        p { color: #888; font-size: 13px; margin-bottom: 30px; }
     </style>
 </head>
 <body>
 
     <div class="loader"></div>
-    <h2>Sedang Membuka...</h2>
-    <p>Sila tunggu sebentar.</p>
+    <h3>Sedang Membuka Produk...</h3>
+    <p>Jika tidak automatik, tekan butang merah.</p>
     
-    <a id="affiliateBtn" href="#" class="btn">LIHAT TAWARAN & PRODUK</a>
-    
-    <a id="directBtn" href="#" class="btn-outline">Buka Produk Terus (Backup)</a>
+    <a id="deepLinkBtn" href="#" class="btn">LIHAT PRODUK</a>
 
     <script>
-        // 1. LINK AFFILIATE PANJANG (Dah siap dimasukkan)
-        var fullAffiliateLink = "https://www.tiktok.com/alliance/ecom/fe/alliance-creator-linkshare/default/linkshare/voucher.html?voucher_type_id=7601096692196460296&product_id=1729444811678976383&pool_id=7599505816131012368&sale_region=MY&chain_key=%7B%22t%22%3A1%2C%22k%22%3A%22000000000000000007601901590493300498%22%2C%22sc%22%3A%22copy%22%7D&use_spark=1&bdhm_bid=alliance_creator_pia&hide_nav_bar=1&hide_status_bar=0&trans_status_bar=1";
-        
-        // 2. PRODUCT ID (Diekstrak dari link kau: 1729444811678976383)
-        var productID = "1729444811678976383";
+        // ==========================================
+        // LINK BARU (SHORT LINK)
+        // ==========================================
+        var productLink = "https://vt.tiktok.com/ZSH3vgQeSGqh1-U8PCD/";
+        // ==========================================
 
-        // Setup User Agent
+        var btn = document.getElementById('deepLinkBtn');
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
         var isAndroid = /android/i.test(userAgent);
         var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        // --- STRATEGI 1: BUKA AFFILIATE LINK DALAM WEBVIEW APP ---
-        // Ini memastikan cookies affiliate ("alliance-creator") berjalan.
-        var encodedFullUrl = encodeURIComponent(fullAffiliateLink);
-        var affiliateDeepLink = fullAffiliateLink;
+        // Kita encode URL supaya boleh masuk dalam parameter 'webview'
+        var encodedUrl = encodeURIComponent(productLink);
+        var finalLink = productLink; // Fallback
 
         if (isIOS) {
-            affiliateDeepLink = "tiktok://webview?url=" + encodedFullUrl;
-        } else if (isAndroid) {
-            affiliateDeepLink = "intent://webview?url=" + encodedFullUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + fullAffiliateLink + ";end";
+            // iOS: Paksa buka internal browser TikTok (webview)
+            // Ini cara terbaik untuk link pendek
+            finalLink = "tiktok://webview?url=" + encodedUrl;
+        } 
+        else if (isAndroid) {
+            // Android: Paksa buka internal browser TikTok Asia (Trill)
+            finalLink = "intent://webview?url=" + encodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
         }
 
-        // --- STRATEGI 2: DIRECT PRODUCT ID (BACKUP) ---
-        // Kalau link affiliate jammed, ini akan tembak terus ke ID Produk.
-        // Format: tiktok://shop/detail?product_id=XXXX
-        var directProductLink = "#";
-        if (isIOS) {
-            directProductLink = "tiktok://shop/detail?product_id=" + productID;
-        } else if (isAndroid) {
-            directProductLink = "intent://shop/detail?product_id=" + productID + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;end";
-        }
+        // Set link pada butang
+        btn.href = finalLink;
 
-        // Set Link pada butang
-        document.getElementById("affiliateBtn").href = affiliateDeepLink;
-        document.getElementById("directBtn").href = directProductLink;
-
-        // AUTO FIRE (Affiliate Link Dulu)
+        // Auto-Execute
         window.onload = function() {
             setTimeout(function() {
-                window.location.href = affiliateDeepLink;
-            }, 200);
-
-            // Simulasi klik lepas 0.8 saat
+                window.location.href = finalLink;
+            }, 300);
+            
+            // Backup click (Simulasi tekan butang)
             setTimeout(function() {
-                document.getElementById("affiliateBtn").click();
-            }, 800);
+                btn.click();
+            }, 1000);
         };
     </script>
 </body>
