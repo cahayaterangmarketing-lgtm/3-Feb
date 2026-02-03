@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buka TikTok Shop...</title>
+    <title>Sedang Membuka...</title>
     <style>
         body {
             background-color: #000000;
@@ -19,9 +19,9 @@
             padding: 20px;
         }
         .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #fe2c55;
             animation: spin 1s ease-in-out infinite;
@@ -29,20 +29,19 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        h2 { font-size: 20px; margin-bottom: 10px; font-weight: 600; }
-        p { color: #888; margin-bottom: 30px; font-size: 14px; max-width: 300px; line-height: 1.5; }
+        h2 { font-size: 18px; margin-bottom: 10px; font-weight: 600; }
+        p { color: #888; margin-bottom: 30px; font-size: 13px; max-width: 300px; line-height: 1.4; }
 
         .btn {
             background-color: #fe2c55;
             color: white;
-            padding: 18px 40px;
+            padding: 16px 32px;
             text-decoration: none;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 16px;
             display: inline-block;
             box-shadow: 0 4px 15px rgba(254, 44, 85, 0.4);
-            margin-bottom: 15px;
             width: 80%;
             max-width: 300px;
         }
@@ -51,14 +50,14 @@
 <body>
 
     <div class="loader"></div>
-    <h2>Sedang membuka TikTok...</h2>
-    <p>Sila tekan butang di bawah jika App tidak terbuka.</p>
+    <h2>Sedang membuka Produk...</h2>
+    <p>Jika tersangkut, tekan butang di bawah:</p>
     
-    <a id="deepLinkBtn" href="#" class="btn">BUKA PRODUK</a>
+    <a id="deepLinkBtn" href="#" class="btn">LIHAT PRODUK</a>
 
     <script>
         // ==========================================
-        // LINK AFFILIATE (Paste link awak di sini)
+        // LINK AFFILIATE
         // ==========================================
         var productLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/";
         // ==========================================
@@ -69,41 +68,37 @@
         var isAndroid = /android/i.test(userAgent);
         var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        var finalLink = "#";
+        var finalLink = productLink;
+
+        // KITA ENCODE URL SUPAYA TIKTOK BOLEH BACA
+        var encodedUrl = encodeURIComponent(productLink);
 
         if (isIOS) {
-            // FIX TERBARU UNTUK IOS:
-            // Jangan guna 'webview?url='.
-            // Kita tukar terus 'https' jadi 'tiktok'.
-            // App TikTok akan faham dia perlu resolve shortlink ni.
-            
-            // Buang 'https://' atau 'http://'
-            var cleanLink = productLink.replace(/^https?:\/\//, '');
-            
-            // Jadikan: tiktok://vt.tiktok.com/xxxx
-            finalLink = "tiktok://" + cleanLink;
+            // iOS STRATEGI: Guna 'tiktok://webview'
+            // Ini memaksa App buka browser dia sendiri, baru link vt.tiktok tu berjalan lancar
+            finalLink = "tiktok://webview?url=" + encodedUrl;
         } 
         else if (isAndroid) {
-            // ANDROID (Kekal dengan Intent com.ss.android.ugc.trill)
-            var cleanLink = productLink.replace(/^https?:\/\//, '');
-            finalLink = "intent://" + cleanLink + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
-        }
-        else {
-            finalLink = productLink;
+            // ANDROID STRATEGI: Sama, kita try paksa webview dalam intent
+            // Kalau intent biasa gagal, ini backup yang power
+            var urlParts = productLink.replace(/^https?:\/\//, '');
+            finalLink = "intent://webview?url=" + encodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
         }
 
         // Set link butang
         btn.href = finalLink;
 
-        // Auto Click
+        // Auto Run
         window.onload = function() {
+            // Delay sikit bagi loading animation nampak
             setTimeout(function() {
                 window.location.href = finalLink;
-            }, 100);
-            
+            }, 200);
+
+            // Force click lepas 1 saat (Backup)
             setTimeout(function() {
                 btn.click();
-            }, 500);
+            }, 1000);
         };
     </script>
 </body>
