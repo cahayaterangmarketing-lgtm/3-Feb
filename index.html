@@ -53,23 +53,20 @@
         var finalLink = shortLink;
 
         if (isAndroid) {
-            // ANDROID: Paksa App TikTok (com.ss.android.ugc.trill)
+            // ANDROID: Kekal guna Intent (Supaya terus buka App)
             finalLink = "intent://" + cleanLink + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + shortLink + ";end";
         } 
         else {
-            // iOS: Guna link asal (Universal Link)
+            // iOS: Kekal guna Universal Link
             finalLink = shortLink;
         }
 
         // Set link pada butang
         btn.href = finalLink;
 
-        // AUTO-CLICK (Diubah dari 50 ke 1000 supaya tak keluar puzzle)
-        window.onload = function() {
-            setTimeout(function() {
-                window.location.href = finalLink;
-            }, 1000); // <--- INI SAHAJA SAYA TUKAR (1 saat)
-        };
+        // SAYA DAH BUANG BAHAGIAN 'window.onload' DI SINI.
+        // User wajib tekan butang manual.
+        // Ini satu-satunya cara untuk elak Verify Puzzle 100%.
     </script>
 </body>
 </html>
