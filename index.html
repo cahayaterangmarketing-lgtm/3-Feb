@@ -17,18 +17,6 @@
             margin: 0;
             text-align: center;
         }
-        /* Loader untuk nampak page sedang bekerja */
-        .loader {
-            border: 4px solid #333;
-            border-top: 4px solid #fe2c55;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 20px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .btn {
             background-color: #fe2c55;
             color: white;
@@ -37,7 +25,7 @@
             border-radius: 8px;
             font-weight: bold;
             font-size: 18px;
-            margin-top: 20px;
+            margin-top: 25px;
             display: inline-block;
             box-shadow: 0 4px 15px rgba(254, 44, 85, 0.5);
         }
@@ -46,11 +34,10 @@
 </head>
 <body>
 
-    <div class="loader"></div>
-    <h3>Sedang Membuka...</h3>
-    <p>Sila tekan Open jika popup muncul.</p>
+    <h3>Sila Tekan Butang Di Bawah</h3>
+    <p>Jika popup tidak keluar...</p>
     
-    <a id="shopBtn" href="#" class="btn">BUKA SEKARANG</a>
+    <a id="shopBtn" href="#" class="btn">BUKA PRODUK</a>
 
     <script>
         // LINK PENDEK AWAK
@@ -60,33 +47,29 @@
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
         var isAndroid = /android/i.test(userAgent);
         
-        // Buang 'https://' untuk Android Intent
+        // Buang 'https://' untuk kegunaan Android Intent
         var cleanLink = shortLink.replace(/^https?:\/\//, '');
+
         var finalLink = shortLink;
 
         if (isAndroid) {
-            // ANDROID: Paksa Intent ke App TikTok Malaysia
+            // ANDROID: Paksa App TikTok (com.ss.android.ugc.trill)
             finalLink = "intent://" + cleanLink + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + shortLink + ";end";
         } 
         else {
-            // iOS: Guna link Universal (https)
+            // iOS: Guna link asal (Universal Link)
             finalLink = shortLink;
         }
 
         // Set link pada butang
         btn.href = finalLink;
 
-        // --- TURBO REDIRECT ---
+        // AUTO-CLICK LAJU (50ms)
+        // Ini akan trigger popup serta-merta bila page load
         window.onload = function() {
-            // 1. Redirect sepantas kilat (50ms)
             setTimeout(function() {
                 window.location.href = finalLink;
-            }, 50);
-
-            // 2. Simulasi Klik (Backup jika redirect tak jalan) - 200ms
-            setTimeout(function() {
-                btn.click();
-            }, 200);
+            }, 50); // <-- Dah ditukar jadi super laju
         };
     </script>
 </body>
