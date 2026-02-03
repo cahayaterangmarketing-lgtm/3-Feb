@@ -19,99 +19,104 @@
             padding: 20px;
         }
         .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: #fe2c55;
             animation: spin 1s ease-in-out infinite;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        h2 { font-size: 20px; margin-bottom: 10px; font-weight: 600; }
-        p { color: #888; margin-bottom: 30px; font-size: 14px; max-width: 300px; line-height: 1.5; }
+        h2 { font-size: 18px; margin-bottom: 10px; font-weight: 600; }
+        p { color: #888; margin-bottom: 30px; font-size: 13px; max-width: 300px; line-height: 1.4; }
 
         .btn {
             background-color: #fe2c55;
             color: white;
-            padding: 18px 40px;
+            padding: 16px 32px;
             text-decoration: none;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 16px;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.4);
-            transition: transform 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            margin-bottom: 15px;
+            width: 80%;
+            max-width: 300px;
         }
-        .btn:active { transform: scale(0.96); }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid #555;
+            color: #ccc;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            display: inline-block;
+            width: 80%;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
 
     <div class="loader"></div>
     <h2>Sedang membuka TikTok...</h2>
-    <p>Jika popup muncul, tekan <b>Open</b>. <br>Atau tekan butang di bawah:</p>
+    <p>Jika popup "Open in TikTok" keluar, tekan <b>Open</b>.</p>
     
-    <a id="deepLinkBtn" href="#" class="btn">BUKA TIKTOK APP</a>
+    <a id="appBtn" href="#" class="btn">BUKA DALAM APP</a>
+    
+    <a id="webBtn" href="#" class="btn-secondary">Buka Link Biasa (Backup)</a>
 
     <script>
         // ==========================================
-        // 1. MASUKKAN LINK AFFILIATE AWAK DI SINI
+        // LINK PRODUK
         // ==========================================
         var productLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/";
         // ==========================================
 
-        var btn = document.getElementById('deepLinkBtn');
-        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        var appBtn = document.getElementById('appBtn');
+        var webBtn = document.getElementById('webBtn');
         
-        // Kesan Android vs iOS
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
         var isAndroid = /android/i.test(userAgent);
         var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        var deepLink = "#";
+        // 1. Setup Link Backup (Link biasa)
+        webBtn.href = productLink;
+
+        // 2. Setup Deep Link (Link App)
+        var deepLink = productLink;
 
         if (isAndroid) {
-            // ANDROID SPECIAL (MALAYSIA/ASIA VERSION)
-            // Kita guna package 'com.ss.android.ugc.trill' (TikTok Asia)
-            // Format Intent ini memaksa Android cari App TikTok sahaja.
+            // Android: Guna Intent untuk TikTok Asia (com.ss.android.ugc.trill)
             var urlParts = productLink.replace(/^https?:\/\//, '');
-            
-            // Intent ini sangat spesifik: "Buka link ini HANYA guna app TikTok Asia"
-            // S.browser_fallback_url kita set kosong atau ke link asal supaya dia tak pening.
             deepLink = "intent://" + urlParts + "#Intent;scheme=https;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + productLink + ";end";
         } 
         else if (isIOS) {
-            // iOS SPECIAL
-            // Guna 'snssdk1128' (Scheme TikTok Global)
-            // Kita encode URL produk supaya webview dalam TikTok boleh bacanya.
+            // iOS FIX: Guna 'tiktok://' bukannya 'snssdk1128://'
+            // Kita encode URL untuk pass ke dalam browser TikTok
             var encodedUrl = encodeURIComponent(productLink);
-            deepLink = "snssdk1128://webview?url=" + encodedUrl;
-        } 
-        else {
-            // Desktop fallback
-            deepLink = productLink;
+            deepLink = "tiktok://webview?url=" + encodedUrl;
         }
 
-        // Set link pada butang
-        btn.href = deepLink;
+        // Set link pada butang utama
+        appBtn.href = deepLink;
 
-        // AUTO REDIRECT (Cuba sekali sahaja)
-        // Kita guna setTimeout pendek. Browser Facebook mungkin block ini,
-        // TAPI popup "Open in TikTok" akan keluar jika browser tak block sepenuhnya.
-        setTimeout(function() {
-            window.location.href = deepLink;
-        }, 100);
-
-        // EXTRA: Simulasikan klik pada butang (Trick untuk bypass browser)
-        // Kadang-kadang browser ingat user yang klik kalau kita trigger dari event.
+        // Auto-Click Simulation (Untuk paksa popup keluar)
         window.onload = function() {
             setTimeout(function() {
-                btn.click();
+                // Cuba redirect
+                window.location.href = deepLink;
+            }, 100);
+
+            setTimeout(function() {
+                // Cuba klik butang secara maya
+                appBtn.click();
             }, 500);
         };
-
     </script>
 </body>
 </html>
