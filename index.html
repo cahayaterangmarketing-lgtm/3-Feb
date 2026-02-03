@@ -3,60 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TikTok Shop...</title>
+    <title>Tuntut Baucar TikTok...</title>
     <style>
-        body { background-color: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
-        .loader { border: 4px solid #333; border-top: 4px solid #fe2c55; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .btn { background-color: #fe2c55; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; display: inline-block; font-size: 18px; width: 80%; max-width: 300px; }
-        p { color: #aaa; font-size: 13px; margin-top: 15px; padding: 0 20px; line-height: 1.4; }
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            padding: 20px;
+        }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fe2c55;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 25px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        h2 { font-size: 18px; margin-bottom: 5px; font-weight: 600; }
+        p { color: #888; margin-bottom: 30px; font-size: 13px; max-width: 300px; line-height: 1.4; }
+
+        .btn {
+            background-color: #fe2c55;
+            color: white;
+            padding: 18px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.3);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #333;
+            color: #ccc;
+            padding: 15px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            display: block;
+            width: 100%;
+            max-width: 320px;
+        }
     </style>
 </head>
 <body>
+
     <div class="loader"></div>
-    <h3>Membuka Produk...</h3>
-    <p>Jika tersangkut di FYP, sila kembali ke sini dan tekan butang merah.</p>
+    <h2>Sedang Membuka...</h2>
+    <p>Sila tunggu sebentar.</p>
     
-    <a id="deepLinkBtn" href="#" class="btn">LIHAT PRODUK</a>
+    <a id="affiliateBtn" href="#" class="btn">LIHAT TAWARAN & PRODUK</a>
+    
+    <a id="directBtn" href="#" class="btn-outline">Buka Produk Terus (Backup)</a>
 
     <script>
-        // ========================================================
-        // LINK PENDEK KAU (Paste di sini)
-        // ========================================================
-        var shortLink = "https://vt.tiktok.com/ZS91VUYjfwwMh-DkhVA/"; 
-        // ========================================================
+        // 1. LINK AFFILIATE PANJANG (Dah siap dimasukkan)
+        var fullAffiliateLink = "https://www.tiktok.com/alliance/ecom/fe/alliance-creator-linkshare/default/linkshare/voucher.html?voucher_type_id=7601096692196460296&product_id=1729444811678976383&pool_id=7599505816131012368&sale_region=MY&chain_key=%7B%22t%22%3A1%2C%22k%22%3A%22000000000000000007601901590493300498%22%2C%22sc%22%3A%22copy%22%7D&use_spark=1&bdhm_bid=alliance_creator_pia&hide_nav_bar=1&hide_status_bar=0&trans_status_bar=1";
+        
+        // 2. PRODUCT ID (Diekstrak dari link kau: 1729444811678976383)
+        var productID = "1729444811678976383";
 
-        var btn = document.getElementById('deepLinkBtn');
+        // Setup User Agent
         var userAgent = navigator.userAgent || navigator.vendor || window.opera;
         var isAndroid = /android/i.test(userAgent);
         var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        // 1. Buang slash belakang jika ada (kadang2 slash ni punca error)
-        var cleanLink = shortLink.replace(/\/$/, "");
-
-        // 2. TEKNIK DOUBLE ENCODING (Rahsia dia kat sini)
-        // Kita encode DUA KALI supaya app tak 'telan' link ni mentah-mentah.
-        var doubleEncodedUrl = encodeURIComponent(encodeURIComponent(cleanLink));
-
-        var finalLink = cleanLink;
+        // --- STRATEGI 1: BUKA AFFILIATE LINK DALAM WEBVIEW APP ---
+        // Ini memastikan cookies affiliate ("alliance-creator") berjalan.
+        var encodedFullUrl = encodeURIComponent(fullAffiliateLink);
+        var affiliateDeepLink = fullAffiliateLink;
 
         if (isIOS) {
-            // iOS: Force Webview dengan Double Encode
-            // Bila App baca, dia akan decode sekali -> dapat link encoded -> pass kat browser -> browser decode lagi -> dapat link sebenar.
-            finalLink = "tiktok://webview?url=" + doubleEncodedUrl;
-        } 
-        else if (isAndroid) {
-            // Android: Sama, kita guna double encode dalam Intent
-            // Guna package com.ss.android.ugc.trill (TikTok Asia/Malaysia)
-            finalLink = "intent://webview?url=" + doubleEncodedUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + cleanLink + ";end";
+            affiliateDeepLink = "tiktok://webview?url=" + encodedFullUrl;
+        } else if (isAndroid) {
+            affiliateDeepLink = "intent://webview?url=" + encodedFullUrl + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;S.browser_fallback_url=" + fullAffiliateLink + ";end";
         }
 
-        btn.href = finalLink;
+        // --- STRATEGI 2: DIRECT PRODUCT ID (BACKUP) ---
+        // Kalau link affiliate jammed, ini akan tembak terus ke ID Produk.
+        // Format: tiktok://shop/detail?product_id=XXXX
+        var directProductLink = "#";
+        if (isIOS) {
+            directProductLink = "tiktok://shop/detail?product_id=" + productID;
+        } else if (isAndroid) {
+            directProductLink = "intent://shop/detail?product_id=" + productID + "#Intent;scheme=tiktok;package=com.ss.android.ugc.trill;end";
+        }
 
-        // Auto Execute
+        // Set Link pada butang
+        document.getElementById("affiliateBtn").href = affiliateDeepLink;
+        document.getElementById("directBtn").href = directProductLink;
+
+        // AUTO FIRE (Affiliate Link Dulu)
         window.onload = function() {
-            setTimeout(function() { window.location.href = finalLink; }, 200);
-            setTimeout(function() { btn.click(); }, 1200);
+            setTimeout(function() {
+                window.location.href = affiliateDeepLink;
+            }, 200);
+
+            // Simulasi klik lepas 0.8 saat
+            setTimeout(function() {
+                document.getElementById("affiliateBtn").click();
+            }, 800);
         };
     </script>
 </body>
